@@ -1,0 +1,31 @@
+{% extends "base.html" %} 
+{% block content %}
+
+<div class="container">
+    <div class = "row">
+        <div class = "mt-0 mb-4">
+            {% for region in region_list %}
+                <div class = "card mt-0 mb-4"> 
+                    <div class = "card-body">
+                        <h2 class = "card-title">{{ region.country }}, {{ region.town }}</h2>
+                        <p class="card-text text-muted h6">Added on {{ region.added }}</p>
+                        <a href="{% url 'region_detail' region.slug  %}" class="btn btn-primary">Read More</a> <!-- &rarr;</a> -->
+                        <!-- <div class= "input-group-prepend"> -->
+                        <a href = "{% url 'region_update' region.slug %}", name = "update", class = "btn btn-success">Update</a>
+                        <a href = "{% url 'region_delete' region.slug %}", name = "delete", class = "btn btn-danger">Delete</a>
+                        <!-- </div> -->
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div class="mt-0 mb-4">
+                <a href = "{% url 'region_create' %}", name = "create", class="btn btn-info">Add region</a>
+                <!-- href refers to the html template -->
+            </div>
+            
+            
+        </div>
+    </div>
+</div>
+
+{% endblock %}

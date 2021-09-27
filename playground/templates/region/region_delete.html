@@ -1,0 +1,22 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-20 card mb-4  mt-3 left  top">
+            <div class="card-body">
+                <h1>{% block title %}Delete "{{ region.country }} {{ region.town }}"{% endblock title %}</h1>
+                <p>This action is irreversible, are you sure you want to proceed?</p>
+                
+                <form method = "POST", action = "{% url 'region_delete' region.slug %}">
+                    {% csrf_token %}
+                    <button type = "submit", name = "delete_region", value = "delete", class = "btn btn-danger">Confirm delete</button>
+                    <a href = "/regions", class="btn btn-primary">Cancel</a>
+                </form>
+                
+            
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

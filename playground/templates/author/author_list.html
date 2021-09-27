@@ -1,0 +1,33 @@
+{% extends "base.html" %} 
+{% block content %}
+
+<div class="container">
+    <div class = "row">
+        <div class = "mt-0 mb-4">
+            {% for author in author_list %}
+                <div class = "card mt-0 mb-4"> 
+                    <div class = "card-body">
+                        <h2 class = "card-title">{{ author.first_name }} {{ author.last_name }}</h2>
+                        <p class="card-text text-muted h6">{{ author.occupation }}</p>
+                        <p class="card-text text-muted h6">Joined on {{ author.joined }}</p>
+                        <p class="card-text">{{ author.biography|slice:":200" }}</p>
+                        <a href="{% url 'author_detail' author.slug  %}" class="btn btn-primary">Read More</a> <!-- &rarr;</a> -->
+                        <!-- <div class= "input-group-prepend"> -->
+                        <a href = "{% url 'author_update' author.slug %}", name = "update", class = "btn btn-success">Update</a>
+                        <a href = "{% url 'author_delete' author.slug %}", name = "delete", class = "btn btn-danger">Delete</a>
+                        <!-- </div> -->
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div class="mt-0 mb-4">
+                <a href = "{% url 'author_create' %}", name = "create", class="btn btn-info">Add author</a>
+                <!-- href refers to the html template -->
+            </div>
+            
+            
+        </div>
+    </div>
+</div>
+
+{% endblock %}
