@@ -1,2 +1,2 @@
-# articles_collection
+# The articles collection
 A Django project that allows for a user to make simple CRUD commands.
