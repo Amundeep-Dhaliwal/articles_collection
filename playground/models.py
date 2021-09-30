@@ -7,6 +7,8 @@ from django.utils.text import slugify
 
 # ! on_delete signifies a special way of removing items
 
+# exception resolved by deleting db, makemigrations and migrate
+
 class Author(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
@@ -22,8 +24,7 @@ class Author(models.Model):
         ordering = ['-joined']
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(f'{self.first_name} {self.last_name}')
+        self.slug = slugify(f'{self.first_name} {self.last_name}')
         return super().save(*args, **kwargs)
 
 
@@ -33,7 +34,6 @@ class Region(models.Model):
     town = models.CharField(max_length=100)
     added = models.DateTimeField(auto_now_add = True)
     slug = models.SlugField(unique = True, null = False, blank = True)
-    # does one need a many to many relationship here
 
     def __str__(self):
         return f'{self.country}, {self.town}'
@@ -42,8 +42,7 @@ class Region(models.Model):
         ordering = ['-added']
     
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(f'{self.country} {self.town}')
+        self.slug = slugify(f'{self.country} {self.town}')
         return super().save(*args, **kwargs)
 
 class Article(models.Model):
@@ -51,8 +50,8 @@ class Article(models.Model):
     slug = models.SlugField(unique = True, null = False, blank = True)
     created_on = models.DateTimeField(auto_now_add = True)
     updated_on = models.DateTimeField(auto_now = True)
-    author = models.ForeignKey(Author, on_delete= models.CASCADE)
-    region = models.ForeignKey(Region, on_delete=models.CASCADE) # exception resolved by deleting db, makemigrations and migrate
+    author = models.ForeignKey(Author, on_delete= models.CASCADE)#, blank = True, null = True)
+    regions = models.ManyToManyField(Region, related_name='regions')#blank = True) 
     content = models.TextField()
 
     class Meta:
@@ -62,6 +61,5 @@ class Article(models.Model):
         return self.title
     
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.title)
+        self.slug = slugify(self.title)
         return super().save(*args, **kwargs)

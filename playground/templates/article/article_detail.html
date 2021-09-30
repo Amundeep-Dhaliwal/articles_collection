@@ -5,7 +5,10 @@
         <div class="col-md-20 card mb-4  mt-3 left  top">
         <div class="card-body">
             <h1>{% block title %} {{ object.title }} {% endblock title %}</h1>
-            <p class="text-muted">{{ article.author }} | {{ article.region }} | {{ article.created_on }}</p>
+            <p class="card-text text-muted h6">{{ article.author }} | {{ article.created_on }}</p>
+            {% for region in article.regions.all %}
+                <p class="card-text text-muted h6">{{ region }}</p>
+            {% endfor %}
             <p class="text-muted">Last updated on {{ article.updated_on }}</p>
             <p class="card-text ">{{ object.content | safe }}</p>
         </div>

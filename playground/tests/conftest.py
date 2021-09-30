@@ -20,7 +20,7 @@ def database_entities():
     article_0 = models.Article(
         title = 'This is a title', 
         author = author_0, 
-        region = region_0,
+        # regions = region_0,
         content = 'This is some text'
     )
     article_0.save() 

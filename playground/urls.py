@@ -3,12 +3,13 @@ from . import views
 
 # url configuration
 urlpatterns = [
-    # path('', views.home, name = 'redirect'),
+    path('', views.home, name = 'redirect'),
     path('home/', views.home, name = 'home_page'), 
     
     path('articles/', views.ArticleList.as_view(), name = "articles"), 
+    path('articles/<str:regions>/', views.ArticleList.as_view(), name = "articles"), 
 
-    path('articles/<str:region_country>/', views.filter_articles, name = "articles_filter"), 
+    # path('articles/<str:region_country>/', views.filter_articles, name = "articles_filter"), 
 
     path('article/create/', views.create_article, name = "article_create"),
     path('article/<slug:slug>/', views.ArticleDetail.as_view() , name = "article_detail"),

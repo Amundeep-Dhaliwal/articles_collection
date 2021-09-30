@@ -7,12 +7,14 @@ from .models import Article, Author, Region
 from .forms import ArticleForm, AuthorForm, RegionForm
 # Create your views here.
 from django.utils.text import slugify
-
+from django.db.models import Count
 
 from pprint import pprint
 from pycountry import countries
 # a request handler, no template or HTML
 # a view function is a function that takes a request and returns a response
+
+slugs_to_country_names = {slugify(c.name):c.name for c in countries}
 
 def home(request):
     return render(request, 'home.html', {'variable': {'a':'b'}})
@@ -34,11 +36,12 @@ def create_entity(request, model_form, redirect_location, html_location):
 
     if request.method == 'POST': 
         form = model_form(request.POST)
-
+        
         if form.is_valid():
-
             form.save() 
             return redirect(redirect_location)
+        else:
+            print(form.errors)
     
     return render(request, html_location, context)
 
@@ -54,6 +57,8 @@ def update_entity(request, model, model_form, slug, redirect_location, html_loca
 
             form.save()
             return redirect(redirect_location)
+        else:
+            print(form.errors)
 
     return render(request, html_location, context)
 
@@ -66,7 +71,7 @@ def delete_entity(request, model, model_str, slug, html_indicator, redirect_loca
         entity.delete()
 
         return redirect(redirect_location)
-        
+    
     return render(request, html_location, context)
 
 class ArticleList(generic.ListView):
@@ -74,17 +79,34 @@ class ArticleList(generic.ListView):
     template_name= 'article/article_list.html'
     model = Article
 
-    # def get_queryset(self):
-    #     pprint(self.args)
-    #     region_country = get_object_or_404(Article, name = self.args[0])
-    #     # return Article.objects.filter(region__country = self.region_country)
-    #     query_set = super().get_queryset()
-    #     query_set = Article.objects.filter(region__country = region_country)
-    #     for article in query_set:
-    #         pprint(dir(query_set))
-    #         pprint(article.region.country)
-    #         # query_set.exclude(article)
-    #     return query_set
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        if queryset == False: 
+            return redirect('/articles')
+        else:
+            return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        if self.kwargs == {}:
+            return Article.objects.all()
+        else:
+
+            queried_countries = set(self.kwargs['regions'].split('&'))
+            requested_countries = []
+            for country in queried_countries: 
+                if not country in slugs_to_country_names: 
+                    return False
+                else:
+                    requested_countries.append(slugs_to_country_names[country])
+            
+            queried_number = len(requested_countries)
+            
+            query_set = Article.objects.annotate(num_regions = Count('regions')).filter(num_regions__gte =queried_number)
+            
+            for country_name in requested_countries:
+                query_set = query_set.filter(regions__country = country_name)
+
+            return query_set
 
 class ArticleDetail(generic.DetailView):
     model = Article

@@ -20,6 +20,6 @@ import debug_toolbar # ! debug support
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path('playground/', include('playground.urls')), 
-    path('', include('playground.urls'), name = 'access'), # ? straight to the app
+    path('', include('playground.urls'), name = 'access'), # * anything that matches the domain is passed to another urls module 
     path('__debug__/', include(debug_toolbar.urls), name = 'debug') # ! debug support
 ]

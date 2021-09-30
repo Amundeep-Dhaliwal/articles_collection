@@ -4,6 +4,7 @@ from django.urls import reverse
 import pytest
 # Create your tests here.
 from playground import views, models
+from pprint import pprint 
 
 @pytest.mark.django_db
 class TestViews:
@@ -19,16 +20,17 @@ class TestViews:
         path = reverse('article_create')
         factory = RequestFactory() 
         data = {
-            'author': '0',
+            'author': None,
             'content': 'This is some text',
             'create_article': 'create',
-            'region': '0',
+            'regions': [],
             'title': 'This is a title'
         }
-        request = factory.post(path, data,content_type='application/json')
+        request = factory.post(path, data,content_type='application/x-www-form-urlencoded')
 
         response = views.create_article(request)
         assert response.status_code == 200
+        # assert len(models.Article.objects.all()) == 1
 
     def test_update_article(self, database_entities):
         path = reverse('article_update', kwargs= {'slug':'this-is-a-title'})
@@ -38,10 +40,10 @@ class TestViews:
             'author': '0',
             'content': 'This is some text',
             'create_article': 'create',
-            'region': '0',
+            'regions': '0',
             'title': 'This is a title'
         }
-        request = factory.post(path, data,content_type='application/json')
+        request = factory.post(path, data,content_type='application/x-www-form-urlencoded')
 
         response = views.update_article(request, slug = 'this-is-a-title' )
         assert response.status_code == 200
@@ -54,7 +56,7 @@ class TestViews:
             'author': '0',
             'content': 'This is some text',
             'delete_article': 'delete',
-            'region': '0',
+            'regions': '0',
             'title': 'This is a title'
         }
         request = factory.post(path, data)
